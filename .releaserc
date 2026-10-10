@@ -9,7 +9,22 @@
         ]
       }
     ],
-    ["@semantic-release/release-notes-generator", { "writerOpts": { "headerPartial": "" } }],
+    [
+      "@semantic-release/release-notes-generator",
+      {
+        "preset": "conventionalcommits",
+        "presetConfig": {
+          "types": [
+            { "type": "feat", "section": "Features" },
+            { "type": "fix", "section": "Bug Fixes" },
+            { "type": "perf", "section": "Performance Improvements" },
+            { "type": "ci", "section": "CI", "hidden": false },
+            { "type": "chore", "scope": "deps", "section": "Dependencies", "hidden": false }
+          ]
+        },
+        "writerOpts": { "headerPartial": "" }
+      }
+    ],
     [
       "@semantic-release/github",
       {
