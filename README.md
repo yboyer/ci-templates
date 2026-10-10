@@ -131,12 +131,12 @@ jobs:
         with:
           node-version-file: .node-version
       - id: release
-        uses: yboyer/actions/semantic-release@main
+        uses: yboyer/actions/semantic-release@5c400ee78c4b0775652ddecebe811c238233affe # v1.4.0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 ```
 
-Replace `@main` with the commit SHA of a published revision containing this action. Grant any additional permissions required by your configured plugins; npm trusted publishing requires `id-token: write`. Subsequent publish jobs can use `needs: release` and `if: needs.release.outputs.tag != ''` to run only for a new release.
+The reference above follows the current repository release; v1.4.0 does not yet contain this action. Before running the workflow, replace it with the commit SHA of a published revision containing this action. Grant any additional permissions required by your configured plugins; npm trusted publishing requires `id-token: write`. Subsequent publish jobs can use `needs: release` and `if: needs.release.outputs.tag != ''` to run only for a new release.
 
 ### NPM version bump
 
