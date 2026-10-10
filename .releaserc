@@ -2,6 +2,13 @@
   "plugins": [
     "@semantic-release/commit-analyzer",
     ["@semantic-release/release-notes-generator", { "writerOpts": { "headerPartial": "" } }],
-    ["@semantic-release/github", { "successComment": false, "releasedLabels": false }]
+    [
+      "@semantic-release/github",
+      {
+        "failComment": false,
+        "successComment": false,
+        "releasedLabels": false
+      }
+    ]
   ]
 }
