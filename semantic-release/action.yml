@@ -1,0 +1,26 @@
+name: Semantic release
+description: Run semantic-release using the repository configuration and expose the created tag.
+
+outputs:
+  tag:
+    description: Git tag created by semantic-release, or an empty string when no release is needed.
+    value: ${{ steps.release.outputs.tag }}
+
+runs:
+  using: composite
+  steps:
+    - id: release
+      name: Run semantic-release
+      shell: bash
+      run: |
+        export LC_ALL=C
+        tags_before=$(mktemp)
+        trap 'rm -f "$tags_before"' EXIT
+        git tag --list | sort > "$tags_before"
+        npx --yes --package=semantic-release@25.0.1 --package=@semantic-release/git@11.0.1 semantic-release
+        tag=$(comm -13 "$tags_before" <(git tag --list | sort))
+        if [[ "$tag" == *$'\n'* ]]; then
+          echo "Expected at most one new release tag." >&2
+          exit 1
+        fi
+        echo "tag=$tag" >> "$GITHUB_OUTPUT"

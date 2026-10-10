@@ -7,6 +7,7 @@ Repository of reusable GitHub Actions.
 - [Trivy — security scan](#trivy--security-scan)
 - [Report failed vulnerability check](#report-failed-vulnerability-check)
 - [Docker publish](#docker-publish)
+- [Semantic release](#semantic-release)
 - [NPM version bump](#npm-version-bump)
 - [Clean npm overrides](#clean-npm-overrides)
 - [NPM release — direct version bump](#npm-release--direct-version-bump)
@@ -98,6 +99,44 @@ jobs:
 The `secrets` input uses the same `id=value` format as [`docker/build-push-action`](https://github.com/docker/build-push-action). The Dockerfile can consume the above secret with `RUN --mount=type=secret,id=token ...`.
 
 Docker tags are derived from the checked-out Git ref. Check out the release tag before invoking this action, including for manually orchestrated releases.
+
+### Semantic release
+
+The [`semantic-release`](semantic-release/action.yml) composite action runs `semantic-release@25.0.1` with `@semantic-release/git@11.0.1`, using the caller repository's release configuration. Its `tag` output is empty when no release is needed.
+
+The caller must check out the release branch with full history and tags, set up Node.js, and provide `GITHUB_TOKEN`. Keep dependency installation, builds, and deployment steps in the caller workflow.
+
+```yaml
+name: Release
+
+on:
+  workflow_dispatch:
+
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    outputs:
+      tag: ${{ steps.release.outputs.tag }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version-file: .node-version
+      - id: release
+        uses: yboyer/actions/semantic-release@5c400ee78c4b0775652ddecebe811c238233affe # v1.4.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+```
+
+Subsequent publish jobs can use `needs: release` and `if: needs.release.outputs.tag != ''` to run only for a new release.
 
 ### NPM version bump
 
