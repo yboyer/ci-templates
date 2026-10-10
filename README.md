@@ -136,7 +136,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 ```
 
-The reference above follows the current repository release; v1.4.0 does not yet contain this action. Before running the workflow, replace it with the commit SHA of a published revision containing this action. Grant any additional permissions required by your configured plugins; npm trusted publishing requires `id-token: write`. Subsequent publish jobs can use `needs: release` and `if: needs.release.outputs.tag != ''` to run only for a new release.
+Subsequent publish jobs can use `needs: release` and `if: needs.release.outputs.tag != ''` to run only for a new release.
 
 ### NPM version bump
 
